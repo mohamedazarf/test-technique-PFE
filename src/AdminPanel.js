@@ -1,21 +1,25 @@
-import React, { useState } from "react";
-
+import React, { useState,useEffect } from "react";
+import axios from "axios";
 function AdminPanel() {
   // State to manage courses
-  const [courses, setCourses] = useState([
-    {
-      id: 1,
-      title: "Spring Boot / Angular",
-      price: "350 DT/ Month",
-      img: "assets/images/9antra.png",
-    },
-    {
-      id: 2,
-      title: "Node JS / React",
-      price: "350 DT/ Month",
-      img: "assets/images/9antra.png",
-    },
-  ]);
+  const [courses, setCourses] = useState([]);
+  useEffect(() => {
+    // Fetch courses from the backend
+    axios
+  .get("http://localhost:5000/api/courses")
+  .then((response) => {
+    const fetchedCourses = response.data.map((course) => ({
+      ...course,
+      img: course.img || "/assets/images/9antra.png", // Default image if none exists
+    }));
+    console.log(courses);
+    setCourses(fetchedCourses);
+  })
+  .catch((error) => {
+    console.error("Error fetching courses:", error);
+  });
+
+  }, []);
 
   // State for the new course form
   const [newCourse, setNewCourse] = useState({
@@ -47,10 +51,15 @@ function AdminPanel() {
   const handleAddCourse = () => {
     setCourses([
       ...courses,
-      { id: Date.now(), ...newCourse },
+      {
+        id: Date.now(),
+        ...newCourse,
+        img: newCourse.img || "/assets/images/9antra.png", // Fallback to default image
+      },
     ]);
     setNewCourse({ title: "", price: "", img: null });
   };
+  
 
   // Handle delete course
   const handleDeleteCourse = (id) => {
@@ -107,11 +116,13 @@ function AdminPanel() {
       <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {courses.map((course) => (
           <li key={course.id} className="bg-white p-4 rounded-lg shadow-md">
-            <img
-              src={course.img}
-              alt={course.title}
-              className="w-full h-40 object-cover rounded-t-lg mb-4"
-            />
+          <img
+            src={course.img}
+            alt={course.title}
+            className="w-full h-40 object-cover rounded-t-lg mb-4"
+            onError={(e) => (e.target.src = "/assets/images/9antra.png")} // Replace broken images
+          />
+
             <h3 className="text-lg font-semibold">{course.title}</h3>
             <p className="text-pink-600">{course.price}</p>
             <div className="flex space-x-4 mt-4">
