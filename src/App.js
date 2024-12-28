@@ -1,13 +1,16 @@
 import './App.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from './LandingPage';
 import AdminPanel from './AdminPanel';
 
 function App() {
   return (
-    <div className="App">
-     {/* <LandingPage/> */}
-     <AdminPanel/>
-    </div>
+    <Router>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/admin" element={<AdminPanel />} />
+    </Routes>
+  </Router>
   );
 }
 
