@@ -55,10 +55,20 @@ function AdminPanel() {
 
   // Edit course
   const handleEditCourse = (id) => {
-    const courseToEdit = courses.find((course) => course._id === id);
-    setNewCourse(courseToEdit);
+    const courseToEdit = courses.find((course) => course._id === id); // Use `_id`
+    if (courseToEdit) {
+      setNewCourse({
+        title: courseToEdit.title || "",
+        price: courseToEdit.price || "",
+        img: courseToEdit.img || "",
+        description: courseToEdit.description || "",
+        _id: courseToEdit._id, // Set `_id` to switch to edit mode
+      });
+    } else {
+      console.error("Course not found for editing");
+    }
   };
-
+  
   // Update course
   const handleUpdateCourse = () => {
     axios
@@ -120,15 +130,16 @@ function AdminPanel() {
             onChange={handleImageUpload}
             className="mb-4 p-3 w-full border border-gray-300 rounded-md"
           />
-          <button
+         <button
             type="button"
             onClick={newCourse._id ? handleUpdateCourse : handleAddCourse}
             className={`${
               newCourse._id ? "bg-yellow-500" : "bg-blue-500"
             } text-white py-2 px-4 rounded-lg hover:bg-blue-600`}
           >
-            {newCourse._id ? "Update Course" : "Add Course"}
-          </button>
+  {newCourse._id ? "Update Course" : "Add Course"}
+</button>
+
         </form>
       </div>
 
@@ -137,7 +148,7 @@ function AdminPanel() {
       <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
   {courses.map((course) => (
     <li
-      key={course.id}
+      key={course._id} // Use `_id` here
       className="bg-white p-4 rounded-lg shadow-md flex flex-col justify-between"
       style={{ minHeight: "300px" }} // Ensure all cards have a consistent height
     >
@@ -156,13 +167,13 @@ function AdminPanel() {
       </div>
       <div className="flex justify-center space-x-4 mt-4">
         <button
-          onClick={() => handleEditCourse(course.id)}
+          onClick={() => handleEditCourse(course._id)} // Use `_id` here
           className="bg-yellow-400 text-white py-2 px-4 rounded-lg hover:bg-yellow-500"
         >
           Edit
         </button>
         <button
-          onClick={() => handleDeleteCourse(course.id)}
+          onClick={() => handleDeleteCourse(course._id)} // Use `_id` here
           className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
         >
           Delete
@@ -171,6 +182,7 @@ function AdminPanel() {
     </li>
   ))}
 </ul>
+
 
     </div>
   );
